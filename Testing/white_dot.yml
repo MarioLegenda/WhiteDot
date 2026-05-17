@@ -1,0 +1,6 @@
+simple:
+  select:
+    find_user:
+      sql: "SELECT * FROM users WHERE name = :name && id = :id && another = :another"
+      namespace: Testing.Namespace.MyClass
+      assembly: Testing
