@@ -1,6 +1,5 @@
-﻿using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
-using WhiteDot.YamlRoot;
+﻿using WhiteDot.Validation;
+using Deserializer = WhiteDot.YamlRoot.Deserializer;
 
 namespace WhiteDot;
 
@@ -8,21 +7,10 @@ public class WhiteDot
 {
     public void Parse(string path)
     {
-        var yaml = File.ReadAllText(path);
-        
-        var deserializer = new DeserializerBuilder()
-            .WithNamingConvention(UnderscoredNamingConvention.Instance)
-            .IgnoreUnmatchedProperties()
-            .Build();
-        
-        var data = deserializer.Deserialize<Dictionary<string,
-            Dictionary<string,
-                Dictionary<string, SimpleDefinition>>>>(yaml);
+        var data = Deserializer.Deserialize(path);
 
         var parameters = new Dictionary<string, List<string>>();
         Validator.Validate(data, parameters);
-        
-        
     }
     
     /*public static T CreateInstance()

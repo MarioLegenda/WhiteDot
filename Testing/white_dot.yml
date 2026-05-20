@@ -4,3 +4,6 @@ simple:
       sql: "SELECT * FROM users WHERE name = :name && id = :id && another = :another"
       namespace: Testing.Namespace.MyClass
       assembly: Testing
+  insert:
+    insert_user:
+      sql: "INSERT INTO table (id, name) VALUES (:id, :name)"
