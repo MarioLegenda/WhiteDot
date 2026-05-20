@@ -1,4 +1,5 @@
-﻿using WhiteDot.Validation;
+﻿using WhiteDot.Representation;
+using WhiteDot.Validation;
 using Deserializer = WhiteDot.YamlRoot.Deserializer;
 
 namespace WhiteDot;
@@ -11,6 +12,10 @@ public class WhiteDot
 
         var parameters = new Dictionary<string, List<string>>();
         Validator.Validate(data, parameters);
+
+        var representationFactory = new RepresentationFactory(data);
+        Dictionary<string, SelectRepresentation> selectRepresentations = representationFactory.CreateSelectRepresentations(parameters);
+        
     }
     
     /*public static T CreateInstance()

@@ -2,16 +2,16 @@ namespace WhiteDot.Representation;
 
 internal class SelectRepresentation
 {
-    public string Sql { get; set; }
-    public string Nmspace { get; set; }
-    public string Assembly { get; set; }
-    public Dictionary<string, List<string>> Parameters { get; set; }
+    public string Sql { get; }
+    public string Nmspace { get; }
+    public string Assembly { get; }
+    public List<string> Parameters { get; }
     
     public SelectRepresentation(
         string sql, 
         string nmspace, 
         string assembly, 
-        Dictionary<string, List<string>> parameters
+        List<string> parameters
     )
     {
         this.Sql = sql;
