@@ -1,4 +1,5 @@
-﻿using WhiteDot.Representation;
+﻿using System.Data.Common;
+using WhiteDot.Representation;
 using WhiteDot.Validation;
 using Deserializer = WhiteDot.YamlRoot.Deserializer;
 
@@ -6,15 +7,26 @@ namespace WhiteDot;
 
 public class WhiteDot
 {
-    public void Parse(string path)
+    private string _path;
+    private IConnection _connection;
+    
+    public WhiteDot(string path, IConnection connection)
     {
-        var data = Deserializer.Deserialize(path);
+        this._connection = connection;
+        this._path = path;
+    }
+    
+    public async Task ParseAsync()
+    {
+        await this._connection.OpenConnection();
+        var data = Deserializer.Deserialize(this._path);
 
         var parameters = new Dictionary<string, List<string>>();
         Validator.Validate(data, parameters);
 
         var representationFactory = new RepresentationFactory(data);
         Dictionary<string, SelectRepresentation> selectRepresentations = representationFactory.CreateSelectRepresentations(parameters);
+        
         
     }
     
