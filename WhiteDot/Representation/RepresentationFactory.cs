@@ -25,10 +25,23 @@ internal class RepresentationFactory
 
             foreach (var (key, value) in select)
             {
+                var properties = new List<Property>();
+                foreach (var prop in value.Properties)
+                {
+                    var parts = prop.Split(" to ");
+
+                    var from = parts[0];
+                    var to = parts[1];
+                    var createdProperty = new Property(from, to);
+                    
+                    properties.Add(createdProperty);
+                }
+
                 representations[key] = new SelectRepresentation(
                     value.Sql, 
                     value.Namespace, 
                     value.Assembly,
+                    properties,
                     parameters[key]
                 );
             }

@@ -9,3 +9,8 @@ DbProviderFactory factory = NpgsqlFactory.Instance;
 
 var whiteDot = new WhiteDot.WhiteDot("white_dot.yml", new Connection(connectionString, factory));
 await whiteDot.ParseAsync();
+
+await whiteDot.ExecuteSingleAsync("simple.select.find_user", new Dictionary<string, object>()
+{
+    {"id",  10001},
+});

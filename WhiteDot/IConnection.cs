@@ -4,5 +4,6 @@ namespace WhiteDot;
 
 public interface IConnection
 {
-    public Task<DbConnection> OpenConnection();
+    public Task OpenConnection();
+    public DbConnection DbConnection { get; set; }
 }

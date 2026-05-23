@@ -20,7 +20,7 @@ internal class SelectValidator: IValidator
         foreach (var (key, value) in this._definitions)
         {
             var sqlStatement = this._definitions[key];
-
+            
             if (string.IsNullOrWhiteSpace(sqlStatement.Sql))
             {
                 throw new InvalidConfigException("Invalid config. Expected key 'sql' is missing");
@@ -43,6 +43,8 @@ internal class SelectValidator: IValidator
             {
                 throw new InvalidConfigException("Invalid config. Expected key 'assembly' is missing");
             }
+            
+            
         }
     }
 }
