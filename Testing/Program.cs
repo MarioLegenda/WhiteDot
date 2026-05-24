@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using Npgsql;
+using Testing.Namespace;
 using WhiteDot;
 
 string connectionString =
@@ -10,7 +11,14 @@ DbProviderFactory factory = NpgsqlFactory.Instance;
 var whiteDot = new WhiteDot.WhiteDot("white_dot.yml", new Connection(connectionString, factory));
 await whiteDot.ParseAsync();
 
-await whiteDot.ExecuteSingleAsync("simple.select.find_user", new Dictionary<string, object>()
+var model = await whiteDot.ExecuteSingleAsync<EmployeeModel>("simple.select.find_user", new Dictionary<string, object>()
 {
     {"id",  10001},
 });
+
+if (model is null)
+    throw new Exception("model is null");
+
+Console.WriteLine(model.Id);
+Console.WriteLine(model.FirstName);
+Console.WriteLine(model.LastName);

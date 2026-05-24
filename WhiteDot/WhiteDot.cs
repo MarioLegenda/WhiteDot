@@ -1,6 +1,7 @@
 ﻿using System.Data.Common;
 using Microsoft.VisualBasic;
 using WhiteDot.Exceptions;
+using WhiteDot.Repository;
 using WhiteDot.Representation;
 using WhiteDot.Validation;
 using Deserializer = WhiteDot.YamlRoot.Deserializer;
@@ -22,7 +23,7 @@ public class WhiteDot
     public async Task ParseAsync()
     {
         await this._connection.OpenConnection();
-        var data = Deserializer.Deseri0alize(this._path);
+        var data = Deserializer.Deserialize(this._path);
 
         var parameters = new Dictionary<string, List<string>>();
         Validator.Validate(data, parameters);
@@ -33,7 +34,7 @@ public class WhiteDot
         this._selectRepresentations = selectRepresentations;
     }
 
-    public async Task ExecuteSingleAsync(string path, Dictionary<string, object> parameters)
+    public async Task<T?> ExecuteSingleAsync<T>(string path, Dictionary<string, object> parameters)
     {
         var pathSplitted = this.validatePath(path);
         if (pathSplitted[0] == "simple" && pathSplitted[1] == "select")
@@ -41,41 +42,47 @@ public class WhiteDot
             var selectName = pathSplitted[2];
             var representation = this._selectRepresentations[selectName];
 
-            await using DbCommand command = this._connection.DbConnection.CreateCommand();
+            SelectRepository selectRepository =
+                new SelectRepository(this._connection.DbConnection, representation, parameters);
 
-            var sql = representation.Sql;
-            foreach (var parameter in representation.Parameters)
-            {
-                sql = sql.Replace(":" + parameter, "@" + parameter);
-            }
+            await using DbDataReader reader = await selectRepository.SelectSingle();
 
-            command.CommandText = sql;
-            
-            foreach (var parameter in representation.Parameters)
-            {
-                DbParameter param = command.CreateParameter();
-                param.ParameterName = parameter;
-                param.Value = parameters[parameter];
-                
-                command.Parameters.Add(param);
-            }
-            
-            await using DbDataReader reader =
-                await command.ExecuteReaderAsync();
-            
-            await reader.ReadAsync();
-            
             string className = $@"{representation.Nmspace}, {representation.Assembly}";
             Type? type = Type.GetType(className);
         
             if (type == null)
                 throw new TypeNotFoundException($"Type '{className}' not found.");
             
-            var property = type.GetProperty("FirstName");
+            object instance = Activator.CreateInstance(type)!;
+            if (instance == null)
+                throw new TypeNotFoundException($"Type '{className}' could not be created into an instance.");
 
-            Console.WriteLine(reader["first_name"]);
-            Console.WriteLine(reader["last_name"]);
+            foreach (var prop in representation.Properties)
+            {
+                var from = reader[prop.From];
+                var to = prop.To;
+
+                var reflectedProperty = type.GetProperty(to);
+                if (reflectedProperty is not null)
+                {
+                    if (from == DBNull.Value)
+                    {
+                        reflectedProperty.SetValue(instance, null);
+                    }
+                    else
+                    {
+                        reflectedProperty.SetValue(
+                            instance,
+                            Convert.ChangeType(from, reflectedProperty.PropertyType)
+                        );
+                    }             
+                }
+            }
+            
+            return (T)instance;
         }
+
+        return default;
     }
 
     private string[] validatePath(string path)

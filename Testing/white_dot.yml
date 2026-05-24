@@ -6,6 +6,8 @@ simple:
       assembly: Testing
       properties:
         - first_name to FirstName
+        - last_name to LastName
+        - id to Id
   insert:
     insert_user:
       sql: "INSERT INTO table (id, name) VALUES (:id, :name)"
