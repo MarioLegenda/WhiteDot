@@ -22,3 +22,5 @@ if (model is null)
 Console.WriteLine(model.Id);
 Console.WriteLine(model.FirstName);
 Console.WriteLine(model.LastName);
+Console.WriteLine(model.BirthDate);
+Console.WriteLine(model.HireDate);
