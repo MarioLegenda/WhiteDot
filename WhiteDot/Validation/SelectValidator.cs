@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using WhiteDot.Exceptions;
 using WhiteDot.YamlRoot;
@@ -43,8 +44,11 @@ internal class SelectValidator: IValidator
             {
                 throw new InvalidConfigException("Invalid config. Expected key 'assembly' is missing");
             }
-            
-            
+
+            if (sqlStatement.Properties.Count == 0)
+            {
+                throw new InvalidConfigException("Invalid config. Key 'properties' cannot be empty");
+            }
         }
     }
 }

@@ -68,20 +68,4 @@ public class WhiteDot
 
         return splitted;
     }
-    
-    /*public static T CreateInstance()
-    {
-        string className = "Testing.Namespace.MyClass, Testing";
-        Type? type = Type.GetType(className);
-        
-        if (type == null)
-            throw new Exception($"Type '{className}' not found.");
-
-        T? instance = (T?)Activator.CreateInstance(type);
-        
-        if (instance == null)
-            throw new Exception($"Type '{className}' not found.");
-
-        return instance;
-    }*/
 }

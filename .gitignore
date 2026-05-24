@@ -1,5 +1,7 @@
 WhiteDot/bin
 WhiteDot/obj
+WhiteDot.Tests/bin
+WhiteDot.Tests/obj
 Testing/bin
 Testing/obj
 .idea

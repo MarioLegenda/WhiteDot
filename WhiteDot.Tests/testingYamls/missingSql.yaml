@@ -1,0 +1,14 @@
+simple:
+  select:
+    find_user:
+      namespace: Testing.Namespace.EmployeeModel
+      assembly: Testing
+      properties:
+        - first_name to FirstName
+        - last_name to LastName
+        - id to Id
+        - birth_date to BirthDate
+        - hire_date to HireDate
+  insert:
+    insert_user:
+      sql: "INSERT INTO table (id, name) VALUES (:id, :name)"
