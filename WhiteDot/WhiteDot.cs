@@ -24,9 +24,9 @@ public class WhiteDot
     
     public async Task ParseAsync()
     {
-        if (File.Exists(this._path))
+        if (!File.Exists(this._path))
         {
-            
+            throw new InvalidPathException($@"Invalid path. Path {this._path} does not exist.");
         }
         
         await this._connection.OpenConnection();
