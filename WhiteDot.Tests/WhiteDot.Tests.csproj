@@ -22,4 +22,10 @@
     <ProjectReference Include="..\WhiteDot\WhiteDot.csproj" />
   </ItemGroup>
 
+<ItemGroup>
+  <None Include="testingYamls/**/*">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+</ItemGroup>
+
 </Project>

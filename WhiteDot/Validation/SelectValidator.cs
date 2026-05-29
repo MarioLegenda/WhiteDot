@@ -45,6 +45,11 @@ internal class SelectValidator: IValidator
                 throw new InvalidConfigException("Invalid config. Expected key 'assembly' is missing");
             }
 
+            if (sqlStatement.Properties is null)
+            {
+                throw new InvalidConfigException("Invalid config. Key 'properties' cannot be empty");
+            }
+            
             if (sqlStatement.Properties.Count == 0)
             {
                 throw new InvalidConfigException("Invalid config. Key 'properties' cannot be empty");

@@ -5,6 +5,7 @@ using WhiteDot.Repository;
 using WhiteDot.Representation;
 using WhiteDot.Validation;
 using WhiteDot.Reflection;
+using System.IO;
 using Deserializer = WhiteDot.YamlRoot.Deserializer;
 
 namespace WhiteDot;
@@ -23,7 +24,13 @@ public class WhiteDot
     
     public async Task ParseAsync()
     {
+        if (File.Exists(this._path))
+        {
+            
+        }
+        
         await this._connection.OpenConnection();
+
         var data = Deserializer.Deserialize(this._path);
 
         var parameters = new Dictionary<string, List<string>>();

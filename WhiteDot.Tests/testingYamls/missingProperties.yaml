@@ -1,0 +1,6 @@
+simple:
+  select:
+    find_user:
+      sql: "SELECT * FROM employees.employee WHERE id = :id"
+      namespace: Testing.Namespace.EmployeeModel
+      assembly: Testing

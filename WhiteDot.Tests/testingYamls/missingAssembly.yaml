@@ -1,0 +1,11 @@
+simple:
+  select:
+    find_user:
+      sql: "SELECT * FROM employees.employee WHERE id = :id"
+      namespace: Testing.Namespace.EmployeeModel
+      properties:
+        - first_name to FirstName
+        - last_name to LastName
+        - id to Id
+        - birth_date to BirthDate
+        - hire_date to HireDate
