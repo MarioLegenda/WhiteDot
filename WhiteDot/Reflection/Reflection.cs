@@ -62,7 +62,7 @@ internal class Reflection
                         {
                             reflectedProperty.SetValue(instance, new DateOnly(year, month, day));
                         }
-                        catch (ArgumentOutOfRangeException e)
+                        catch (ArgumentOutOfRangeException)
                         {
                             throw new TypeException($@"Invalid date for {prop.From}. DateOnly instance only accepts year/month/day format");
                         }
@@ -82,7 +82,7 @@ internal class Reflection
                         {
                             reflectedProperty.SetValue(instance, new DateOnly(year, month, day));
                         }
-                        catch (ArgumentOutOfRangeException e)
+                        catch (ArgumentOutOfRangeException)
                         {
                             throw new TypeException($@"Invalid date for {prop.From}. DateOnly instance only accepts year/month/day format");
                         }                    }
