@@ -5,7 +5,7 @@ namespace WhiteDot.Validation;
 internal class Validator
 {
     public static void Validate(
-        Dictionary<string, Dictionary<string, SimpleDefinition>> data,
+        Dictionary<string, Dictionary<string, SelectDefinition>> data,
         Dictionary<string, List<string>> parameters)
     {
         if (data.ContainsKey("select"))

@@ -5,7 +5,7 @@ using YamlDotNet.Serialization.NamingConventions;
 
 internal class Deserializer
 {
-    public static Dictionary<string, Dictionary<string, SimpleDefinition>> Deserialize(string path)
+    public static Dictionary<string, Dictionary<string, SelectDefinition>> Deserialize(string path)
     {
         var yaml = File.ReadAllText(path);
         
@@ -14,7 +14,7 @@ internal class Deserializer
             .IgnoreUnmatchedProperties()
             .Build();
         
-        var data = deserializer.Deserialize<Dictionary<string, Dictionary<string, SimpleDefinition>>>(yaml);
+        var data = deserializer.Deserialize<Dictionary<string, Dictionary<string, SelectDefinition>>>(yaml);
 
         return data;
     }

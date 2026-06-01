@@ -5,11 +5,11 @@ namespace WhiteDot.Representation;
 internal class RepresentationFactory
 {
     private Dictionary<string,
-            Dictionary<string, SimpleDefinition>> _representations;
+            Dictionary<string, SelectDefinition>> _representations;
     
     public RepresentationFactory(
         Dictionary<string,
-            Dictionary<string, SimpleDefinition>> representations)
+            Dictionary<string, SelectDefinition>> representations)
     {
         this._representations = representations;
     }

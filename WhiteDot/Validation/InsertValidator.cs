@@ -6,10 +6,10 @@ namespace WhiteDot.Validation;
 
 internal class InsertValidator: IValidator
 {
-    private Dictionary<string, SimpleDefinition> _definitions;
+    private Dictionary<string, SelectDefinition> _definitions;
     private Dictionary<string, List<string>> _parameters;
 
-    public InsertValidator(Dictionary<string, SimpleDefinition> definitions, Dictionary<string, List<string>> parameters)
+    public InsertValidator(Dictionary<string, SelectDefinition> definitions, Dictionary<string, List<string>> parameters)
     {
         this._definitions = definitions;
         this._parameters = parameters;
