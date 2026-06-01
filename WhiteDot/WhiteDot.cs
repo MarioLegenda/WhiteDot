@@ -42,7 +42,7 @@ public class WhiteDot
         this._selectRepresentations = selectRepresentations;
     }
 
-    public async Task<T?> ExecuteSingleAsync<T>(string path, Dictionary<string, object> parameters)
+    public async Task<T?> ReadSingle<T>(string path, Dictionary<string, object> parameters)
     {
         var pathSplitted = this.validatePath(path);
         if (pathSplitted[0] == "select")
