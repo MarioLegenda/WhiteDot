@@ -8,7 +8,7 @@ namespace WhiteDot.Tests;
 public class ReflectionTest
 {
     [Fact]
-    public async Task Should_Throw_If_Wront_Namespace()
+    public async Task Should_Throw_If_Wrong_Namespace()
     {
         string connectionString = "Host=localhost;Port=5432;Database=employees;Username=postgres;Password=password";
 

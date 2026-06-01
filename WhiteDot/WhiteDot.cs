@@ -48,6 +48,11 @@ public class WhiteDot
         if (pathSplitted[0] == "select")
         {
             var selectName = pathSplitted[1];
+            if (!this._selectRepresentations.ContainsKey(pathSplitted[1]))
+            {
+                throw new InvalidPathException($@"Invalid execution path. Path {pathSplitted[0]}.{pathSplitted[1]} does not exist.");
+            }
+            
             var representation = this._selectRepresentations[selectName];
 
             SelectRepository selectRepository =

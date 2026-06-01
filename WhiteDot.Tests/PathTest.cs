@@ -29,7 +29,7 @@ public class PathTest
     }
     
     [Fact]
-    public async Task Should_Throw_If_Execute_Path_Not_Exits()
+    public async Task Should_Throw_If_Execute_Path_Is_Wrong_Representation()
     {
         string connectionString = "Host=localhost;Port=5432;Database=employees;Username=postgres;Password=password";
 
@@ -51,5 +51,30 @@ public class PathTest
         });
         
         Assert.Equal("Invalid path format. Path must be in format, for example select.find_user", ex.Message);
+    }
+    
+    [Fact]
+    public async Task Should_Throw_If_Execute_Path_Not_Exits()
+    {
+        string connectionString = "Host=localhost;Port=5432;Database=employees;Username=postgres;Password=password";
+
+        DbProviderFactory factory = NpgsqlFactory.Instance;
+        
+        var path = Path.Combine(
+            AppContext.BaseDirectory,
+            "testingYamls",
+            "typeNotExists.yaml");
+
+        var ex = await Assert.ThrowsAsync<InvalidPathException>(async () =>
+        {
+            var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
+            await whiteDot.ParseAsync();
+            await whiteDot.ExecuteSingleAsync<EmployeeModel>("select.not_exists", new Dictionary<string, object>()
+            {
+                {"id",  10001},
+            });
+        });
+        
+        Assert.Equal("Invalid execution path. Path select.not_exists does not exist.", ex.Message);
     }
 }
