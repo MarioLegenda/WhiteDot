@@ -37,9 +37,7 @@ internal class RepresentationFactory
                 }
 
                 representations[key] = new SelectRepresentation(
-                    value.Sql, 
-                    value.Namespace, 
-                    value.Assembly,
+                    value.Sql,
                     properties,
                     parameters[key]
                 );

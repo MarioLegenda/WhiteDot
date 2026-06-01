@@ -35,16 +35,6 @@ internal class SelectValidator: IValidator
 
             this._parameters[key] = sqlParameters;
 
-            if (string.IsNullOrWhiteSpace(sqlStatement.Namespace))
-            {
-                throw new InvalidConfigException("Invalid config. Expected key 'namespace' is missing");
-            }
-                
-            if (string.IsNullOrWhiteSpace(sqlStatement.Assembly))
-            {
-                throw new InvalidConfigException("Invalid config. Expected key 'assembly' is missing");
-            }
-
             if (sqlStatement.Properties is null)
             {
                 throw new InvalidConfigException("Invalid config. Key 'properties' cannot be empty");

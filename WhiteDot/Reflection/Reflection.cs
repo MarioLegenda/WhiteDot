@@ -16,17 +16,15 @@ internal class Reflection
         this._reader = reader;
     }
     
-    public object CreateSingleInstance()
+    public object CreateSingleInstance<T>()
     {
-        string className = $@"{this._representation.Nmspace}, {this._representation.Assembly}";
-        Type? type = Type.GetType(className);
-        
+        Type? type = typeof(T);
         if (type == null)
-            throw new TypeNotFoundException($"Type '{className}' not found.");
+            throw new TypeNotFoundException($"Type {nameof(T)} not found.");
             
         object instance = Activator.CreateInstance(type)!;
         if (instance == null)
-            throw new TypeNotFoundException($"Type '{className}' could not be created into an instance.");
+            throw new TypeNotFoundException($"Type could not be created into an instance.");
 
         foreach (var prop in this._representation.Properties)
         {

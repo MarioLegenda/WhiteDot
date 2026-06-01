@@ -61,7 +61,7 @@ public class WhiteDot
             await using DbDataReader reader = await selectRepository.SelectSingle();
 
             Reflection.Reflection reflection = new Reflection.Reflection(representation, reader);
-            object instance = reflection.CreateSingleInstance();
+            object instance = reflection.CreateSingleInstance<T>();
 
             return (T)instance;
         }
