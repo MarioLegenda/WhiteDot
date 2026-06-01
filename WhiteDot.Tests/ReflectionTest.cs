@@ -30,6 +30,5 @@ public class ReflectionTest
         });
         
         Assert.Equal("Type 'WhiteDot.Tests.Namepace.EmployeeModel, WhiteDot.Tests' not found.", ex.Message);
-
     }
 }
