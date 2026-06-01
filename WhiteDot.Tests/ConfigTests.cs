@@ -46,7 +46,7 @@ public class ConfigTests
             var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
             await whiteDot.ParseAsync();
         });
-
+        
         Assert.Equal("Invalid config. Expected key 'namespace' is missing", ex.Message);
     }
     

@@ -23,7 +23,7 @@ public class ReflectionTest
         {
             var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
             await whiteDot.ParseAsync();
-            await whiteDot.ExecuteSingleAsync<EmployeeModel>("simple.select.find_user", new Dictionary<string, object>()
+            await whiteDot.ExecuteSingleAsync<EmployeeModel>("select.find_user", new Dictionary<string, object>()
             {
                 {"id",  10001},
             });

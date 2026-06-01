@@ -5,12 +5,11 @@ namespace WhiteDot.Representation;
 internal class RepresentationFactory
 {
     private Dictionary<string,
-        Dictionary<string,
-            Dictionary<string, SimpleDefinition>>> _representations;
+            Dictionary<string, SimpleDefinition>> _representations;
     
-    public RepresentationFactory(Dictionary<string,
+    public RepresentationFactory(
         Dictionary<string,
-            Dictionary<string, SimpleDefinition>>> representations)
+            Dictionary<string, SimpleDefinition>> representations)
     {
         this._representations = representations;
     }
@@ -19,9 +18,9 @@ internal class RepresentationFactory
     {
         var representations = new Dictionary<string, SelectRepresentation>();
         
-        if (this._representations.ContainsKey("simple") && this._representations["simple"].ContainsKey("select"))
+        if (this._representations.ContainsKey("select"))
         {
-            var select = this._representations["simple"]["select"];
+            var select = this._representations["select"];
 
             foreach (var (key, value) in select)
             {

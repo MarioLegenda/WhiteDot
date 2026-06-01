@@ -45,9 +45,9 @@ public class WhiteDot
     public async Task<T?> ExecuteSingleAsync<T>(string path, Dictionary<string, object> parameters)
     {
         var pathSplitted = this.validatePath(path);
-        if (pathSplitted[0] == "simple" && pathSplitted[1] == "select")
+        if (pathSplitted[0] == "select")
         {
-            var selectName = pathSplitted[2];
+            var selectName = pathSplitted[1];
             var representation = this._selectRepresentations[selectName];
 
             SelectRepository selectRepository =
@@ -67,10 +67,10 @@ public class WhiteDot
     private string[] validatePath(string path)
     {
         var splitted = Strings.Split(path, ".");
-        if (splitted.Length != 3)
+        if (splitted.Length != 2)
         {
             throw new InvalidPathException(
-                "Invalid path format. Path must be in format, for example simple.select.find_user");
+                "Invalid path format. Path must be in format, for example select.find_user");
         }
 
         return splitted;
