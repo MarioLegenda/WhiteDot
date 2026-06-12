@@ -22,7 +22,7 @@ public class PathTest
         var ex = await Assert.ThrowsAsync<InvalidPathException>(async () =>
         {
             var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
-            await whiteDot.ParseAsync();
+            await whiteDot.OpenConnection();
         });
 
         Assert.Equal("Invalid path. Path /home/mario/applications/WhiteDot/WhiteDot.Tests/bin/Debug/net10.0/testingYamls/missgSql.yaml does not exist.", ex.Message);
@@ -43,7 +43,7 @@ public class PathTest
         var ex = await Assert.ThrowsAsync<InvalidPathException>(async () =>
         {
             var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
-            await whiteDot.ParseAsync();
+            await whiteDot.OpenConnection();
             await whiteDot.Read<EmployeeModel>("not_exits.select.find_user", new Dictionary<string, object>()
             {
                 {"id",  10001},
@@ -68,7 +68,7 @@ public class PathTest
         var ex = await Assert.ThrowsAsync<InvalidPathException>(async () =>
         {
             var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
-            await whiteDot.ParseAsync();
+            await whiteDot.OpenConnection();
             await whiteDot.Read<EmployeeModel>("not_exits.select.find_user", new Dictionary<string, object>()
             {
                 {"id",  10001},
@@ -76,6 +76,31 @@ public class PathTest
         });
         
         Assert.Equal("Invalid path format. Path must be in format, for example select.find_user", ex.Message);
+    }
+    
+    [Fact]
+    public async Task Should_Throw_If_Read_Is_Not_Select()
+    {
+        string connectionString = "Host=localhost;Port=5432;Database=employees;Username=postgres;Password=password";
+
+        DbProviderFactory factory = NpgsqlFactory.Instance;
+        
+        var path = Path.Combine(
+            AppContext.BaseDirectory,
+            "testingYamls",
+            "typeNotExists.yaml");
+
+        var ex = await Assert.ThrowsAsync<InvalidPathException>(async () =>
+        {
+            var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
+            await whiteDot.OpenConnection();
+            await whiteDot.Read<EmployeeModel>("insert.insert_user", new Dictionary<string, object>()
+            {
+                {"id",  10001},
+            });
+        });
+        
+        Assert.Equal("A read operation must be a select representation", ex.Message);
     }
     
     [Fact]
@@ -93,7 +118,7 @@ public class PathTest
         var ex = await Assert.ThrowsAsync<InvalidPathException>(async () =>
         {
             var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
-            await whiteDot.ParseAsync();
+            await whiteDot.OpenConnection();
             await whiteDot.Read<EmployeeModel>("select.not_exists", new Dictionary<string, object>()
             {
                 {"id",  10001},

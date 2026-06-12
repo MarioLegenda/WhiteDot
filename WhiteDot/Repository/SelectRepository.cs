@@ -7,9 +7,9 @@ internal struct SelectRepository
 {
     private DbConnection _connection;
     private SelectRepresentation _representation;
-    private Dictionary<string, object> _parameters = null!;
+    private Dictionary<string, object>? _parameters = null!;
 
-    public SelectRepository(DbConnection connection, SelectRepresentation representation, Dictionary<string, object> parameters)
+    public SelectRepository(DbConnection connection, SelectRepresentation representation, Dictionary<string, object>? parameters)
     {
         this._connection = connection;
         this._representation = representation;
@@ -33,16 +33,19 @@ internal struct SelectRepository
         }
 
         command.CommandText = sql;
-        
-        foreach (var parameter in this._representation.Parameters)
+
+        if (this._parameters != null)
         {
-            DbParameter param = command.CreateParameter();
-            param.ParameterName = parameter;
-            param.Value = this._parameters[parameter];
+            foreach (var parameter in this._representation.Parameters)
+            {
+                DbParameter param = command.CreateParameter();
+                param.ParameterName = parameter;
+                param.Value = this._parameters[parameter];
                 
-            command.Parameters.Add(param);
+                command.Parameters.Add(param);
+            }
         }
-            
+
         DbDataReader reader =
             await command.ExecuteReaderAsync();
             

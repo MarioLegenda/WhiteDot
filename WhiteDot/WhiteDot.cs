@@ -12,15 +12,13 @@ namespace WhiteDot;
 
 public class WhiteDot
 {
-    private string _path;
-    private IConnection _connection;
-    private Dictionary<string, SelectRepresentation> _selectRepresentations;
+    private readonly IConnection _connection;
+    private readonly Dictionary<string, SelectRepresentation> _selectRepresentations;
 
     public WhiteDot(string path, IConnection connection)
     {
         this._connection = connection;
-        this._path = path;
-
+        
         if (!File.Exists(path))
         {
             throw new InvalidPathException($@"Invalid path. Path {path} does not exist.");
@@ -34,48 +32,28 @@ public class WhiteDot
         this._selectRepresentations = representationFactory.CreateSelectRepresentations();
     }
     
-    public async Task ParseAsync()
+    public async Task OpenConnection()
     {
         await this._connection.OpenConnection();
     }
 
-    public async Task<T?> Read<T>(string path, Dictionary<string, object> parameters)
+    public async Task<T?> Read<T>(string path, Dictionary<string, object>? parameters = null)
     {
         var pathSplitted = this.validatePath(path);
-        if (pathSplitted[0] == "select")
+        if (pathSplitted[0] != "select")
         {
-            var selectName = pathSplitted[1];
-            var representation = this._selectRepresentations[selectName];
-
-            SelectRepository selectRepository =
-                new SelectRepository(this._connection.DbConnection, representation, parameters);
-
-            Reflection.Reflection reflection = new Reflection.Reflection(representation, selectRepository);
-            object instance = await reflection.CreateInstance<T>();
-
-            return (T)instance;
+            throw new InvalidPathException("A read operation must be a select representation");
         }
+        
+        var representation = this._selectRepresentations[pathSplitted[1]];
 
-        return default;
-    }
-    
-    public async Task<T?> Read<T>(string path)
-    {
-        var pathSplitted = this.validatePath(path);
-        if (pathSplitted[0] == "select")
-        {
-            var representation = this._selectRepresentations[pathSplitted[1]];
+        SelectRepository selectRepository =
+            new SelectRepository(this._connection.DbConnection, representation, parameters);
 
-            SelectRepository selectRepository =
-                new SelectRepository(this._connection.DbConnection, representation);
+        Reflection.Reflection reflection = new Reflection.Reflection(representation, selectRepository);
+        object instance = await reflection.CreateInstance<T>();
 
-            Reflection.Reflection reflection = new Reflection.Reflection(representation, selectRepository);
-            object instance = await reflection.CreateInstance<T>();
-
-            return (T)instance;
-        }
-
-        return default;
+        return (T)instance;
     }
 
     private string[] validatePath(string path)

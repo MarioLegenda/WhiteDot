@@ -23,7 +23,7 @@ public class ConfigTests
         var ex = await Assert.ThrowsAsync<InvalidConfigException>(async () =>
         {
             var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
-            await whiteDot.ParseAsync();
+            await whiteDot.OpenConnection();
         });
 
         Assert.Equal("Invalid config. Expected key 'sql' is missing", ex.Message);
@@ -44,7 +44,7 @@ public class ConfigTests
         var ex = await Assert.ThrowsAsync<InvalidConfigException>(async () =>
         {
             var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
-            await whiteDot.ParseAsync();
+            await whiteDot.OpenConnection();
         });
 
         Assert.Equal("Invalid config. Key 'properties' cannot be empty", ex.Message);

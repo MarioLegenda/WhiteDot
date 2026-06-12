@@ -19,7 +19,7 @@ public class ExecutionTests
             "execution.yaml");
 
         var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
-        await whiteDot.ParseAsync();
+        await whiteDot.OpenConnection();
         var model = await whiteDot.Read<EmployeeModel>("select.find_user", new Dictionary<string, object>()
         {
             {"id",  10001},
@@ -46,7 +46,7 @@ public class ExecutionTests
             "execution.yaml");
 
         var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
-        await whiteDot.ParseAsync();
+        await whiteDot.OpenConnection();
         var model = await whiteDot.Read<List<EmployeeModel>>("select.find_many_users");
 
         Assert.NotNull(model);
