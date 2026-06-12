@@ -1,6 +1,6 @@
 namespace WhiteDot.Representation;
 
-public class InsertRepresentation
+internal class InsertRepresentation
 {
     
 }

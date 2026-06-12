@@ -14,24 +14,19 @@ public class WhiteDot
 {
     private string _path;
     private IConnection _connection;
-    private Dictionary<string, SelectRepresentation> _selectRepresentations = null!;
+    private Dictionary<string, SelectRepresentation> _selectRepresentations;
 
     public WhiteDot(string path, IConnection connection)
     {
         this._connection = connection;
         this._path = path;
-    }
-    
-    public async Task ParseAsync()
-    {
-        if (!File.Exists(this._path))
+
+        if (!File.Exists(path))
         {
-            throw new InvalidPathException($@"Invalid path. Path {this._path} does not exist.");
+            throw new InvalidPathException($@"Invalid path. Path {path} does not exist.");
         }
         
-        await this._connection.OpenConnection();
-
-        var data = Deserializer.Deserialize(this._path);
+        var data = Deserializer.Deserialize(path);
 
         var parameters = new Dictionary<string, List<string>>();
         Validator.Validate(data, parameters);
@@ -40,6 +35,11 @@ public class WhiteDot
         Dictionary<string, SelectRepresentation> selectRepresentations = representationFactory.CreateSelectRepresentations(parameters);
 
         this._selectRepresentations = selectRepresentations;
+    }
+    
+    public async Task ParseAsync()
+    {
+        await this._connection.OpenConnection();
     }
 
     public async Task<T?> Read<T>(string path, Dictionary<string, object> parameters)
@@ -72,13 +72,7 @@ public class WhiteDot
         var pathSplitted = this.validatePath(path);
         if (pathSplitted[0] == "select")
         {
-            var selectName = pathSplitted[1];
-            if (!this._selectRepresentations.ContainsKey(pathSplitted[1]))
-            {
-                throw new InvalidPathException($@"Invalid execution path. Path {pathSplitted[0]}.{pathSplitted[1]} does not exist.");
-            }
-            
-            var representation = this._selectRepresentations[selectName];
+            var representation = this._selectRepresentations[pathSplitted[1]];
 
             SelectRepository selectRepository =
                 new SelectRepository(this._connection.DbConnection, representation);
@@ -109,6 +103,13 @@ public class WhiteDot
         }
 
         var name = splitted[1];
+        if (type == "select")
+        {
+            if (!this._selectRepresentations.ContainsKey(name))
+            {
+                throw new InvalidPathException($@"Invalid execution path. Path {type}.{name} does not exist.");
+            }
+        }
 
         return splitted;
     }
