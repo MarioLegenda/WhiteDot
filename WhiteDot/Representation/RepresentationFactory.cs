@@ -31,12 +31,30 @@ internal class RepresentationFactory
         return representations;
     }
 
+    public Dictionary<string, InsertRepresentation> CreateInsertRepresentations()
+    {
+        var representations = new Dictionary<string, InsertRepresentation>();
+
+        if (this._representations.Insert is not null)
+        {
+            foreach (var (key, value) in this._representations.Insert)
+            {
+                representations[key] = new InsertRepresentation(
+                    value.Sql, 
+                    this.createParameters(value.Sql)
+                );
+            }
+        }
+
+        return representations;
+    }
+
     private List<string> createParameters(string sql)
     {
         var sqlParameters = new List<string>();
-        foreach (Match match in Regex.Matches(sql, @":\w+", RegexOptions.IgnoreCase))
+        foreach (Match match in Regex.Matches(sql, @"@\w+", RegexOptions.IgnoreCase))
         {
-            sqlParameters.Add(match.Value.TrimStart(':'));
+            sqlParameters.Add(match.Value.TrimStart('@'));
         }
 
         return sqlParameters;

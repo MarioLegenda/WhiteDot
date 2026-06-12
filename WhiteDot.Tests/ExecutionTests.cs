@@ -61,4 +61,31 @@ public class ExecutionTests
             Assert.IsType<DateOnly>(item.HireDate);
         }
     }
+    
+    [Fact]
+    public async Task Should_Execute_Insert_Statement()
+    {
+        string connectionString = "Host=localhost;Port=5432;Database=employees;Username=postgres;Password=password";
+
+        DbProviderFactory factory = NpgsqlFactory.Instance;
+        
+        var path = Path.Combine(
+            AppContext.BaseDirectory,
+            "testingYamls",
+            "execution.yaml");
+
+        var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
+        await whiteDot.OpenConnection();
+        
+        int rowsAffected = await whiteDot.Write("insert.insert_user", new Dictionary<string, object>()
+        {
+            {"first_name", "Mario"},
+            {"last_name", "Škrlec"},
+            {"birth_date", DateTime.Now},
+            {"gender", "M"},
+            {"hire_date", DateTime.Now}
+        });
+        
+        Assert.Equal(1, rowsAffected);
+    }
 }

@@ -14,6 +14,7 @@ public class WhiteDot
 {
     private readonly IConnection _connection;
     private readonly Dictionary<string, SelectRepresentation> _selectRepresentations;
+    private readonly Dictionary<string, InsertRepresentation> _insertRepresentations;
 
     public WhiteDot(string path, IConnection connection)
     {
@@ -30,6 +31,7 @@ public class WhiteDot
 
         var representationFactory = new RepresentationFactory(data);
         this._selectRepresentations = representationFactory.CreateSelectRepresentations();
+        this._insertRepresentations = representationFactory.CreateInsertRepresentations();
     }
     
     public async Task OpenConnection()
@@ -47,13 +49,29 @@ public class WhiteDot
         
         var representation = this._selectRepresentations[pathSplitted[1]];
 
-        SelectRepository selectRepository =
+        SelectRepository repository =
             new SelectRepository(this._connection.DbConnection, representation, parameters);
 
-        Reflection.Reflection reflection = new Reflection.Reflection(representation, selectRepository);
+        Reflection.Reflection reflection = new Reflection.Reflection(representation, repository);
         object instance = await reflection.CreateInstance<T>();
 
         return (T)instance;
+    }
+
+    public async Task<int> Write(string path, Dictionary<string, object>? parameters = null)
+    {
+        var pathSplitted = this.validatePath(path);
+        if (pathSplitted[0] != "insert" && pathSplitted[0] != "update" && pathSplitted[0] != "delete")
+        {
+            throw new InvalidPathException("A write operation must be either insert, update or delete representation");
+        }
+        
+        var representation = this._insertRepresentations[pathSplitted[1]];
+        
+        InsertRepository repository =
+            new InsertRepository(this._connection.DbConnection, representation, parameters);
+
+        return await repository.Insert();
     }
 
     private string[] validatePath(string path)
@@ -73,14 +91,16 @@ public class WhiteDot
         }
 
         var name = splitted[1];
-        if (type == "select")
+        if (type == "select" && !this._selectRepresentations.ContainsKey(name))
         {
-            if (!this._selectRepresentations.ContainsKey(name))
-            {
-                throw new InvalidPathException($@"Invalid execution path. Path {type}.{name} does not exist.");
-            }
+            throw new InvalidPathException($@"Invalid execution path. Path {type}.{name} does not exist.");
         }
 
+        if (type == "insert" && !this._insertRepresentations.ContainsKey(name))
+        {
+            throw new InvalidPathException($@"Invalid execution path. Path {type}.{name} does not exist.");
+        }
+        
         return splitted;
     }
 }
