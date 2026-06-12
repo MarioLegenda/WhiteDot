@@ -44,7 +44,7 @@ public class PathTest
         {
             var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
             await whiteDot.ParseAsync();
-            await whiteDot.ReadSingle<EmployeeModel>("not_exits.select.find_user", new Dictionary<string, object>()
+            await whiteDot.Read<EmployeeModel>("not_exits.select.find_user", new Dictionary<string, object>()
             {
                 {"id",  10001},
             });
@@ -69,7 +69,7 @@ public class PathTest
         {
             var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
             await whiteDot.ParseAsync();
-            await whiteDot.ReadSingle<EmployeeModel>("select.not_exists", new Dictionary<string, object>()
+            await whiteDot.Read<EmployeeModel>("select.not_exists", new Dictionary<string, object>()
             {
                 {"id",  10001},
             });

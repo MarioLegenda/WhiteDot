@@ -11,7 +11,7 @@ DbProviderFactory factory = NpgsqlFactory.Instance;
 var whiteDot = new WhiteDot.WhiteDot("white_dot.yml", new Connection(connectionString, factory));
 await whiteDot.ParseAsync();
 
-var model = await whiteDot.ReadSingle<EmployeeModel>("select.find_user", new Dictionary<string, object>()
+var model = await whiteDot.Read<List<EmployeeModel>>("select.find_user", new Dictionary<string, object>()
 {
     {"id",  10001},
 });
@@ -19,8 +19,11 @@ var model = await whiteDot.ReadSingle<EmployeeModel>("select.find_user", new Dic
 if (model is null)
     throw new Exception("model is null");
 
-Console.WriteLine(model.Id);
-Console.WriteLine(model.FirstName);
-Console.WriteLine(model.LastName);
-Console.WriteLine(model.BirthDate);
-Console.WriteLine(model.HireDate);
+foreach (var item in model)
+{
+Console.WriteLine(item.Id);
+Console.WriteLine(item.FirstName);
+Console.WriteLine(item.LastName);
+Console.WriteLine(item.BirthDate);
+Console.WriteLine(item.HireDate);
+}

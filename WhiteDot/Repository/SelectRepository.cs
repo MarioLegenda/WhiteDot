@@ -27,7 +27,7 @@ internal struct SelectRepository
         }
 
         command.CommandText = sql;
-            
+        
         foreach (var parameter in this._representation.Parameters)
         {
             DbParameter param = command.CreateParameter();
