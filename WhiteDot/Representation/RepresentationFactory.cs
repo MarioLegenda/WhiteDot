@@ -4,12 +4,10 @@ namespace WhiteDot.Representation;
 
 internal class RepresentationFactory
 {
-    private Dictionary<string,
-            Dictionary<string, SelectDefinition>> _representations;
+    private Root _representations;
     
     public RepresentationFactory(
-        Dictionary<string,
-            Dictionary<string, SelectDefinition>> representations)
+        Root representations)
     {
         this._representations = representations;
     }
@@ -18,9 +16,9 @@ internal class RepresentationFactory
     {
         var representations = new Dictionary<string, SelectRepresentation>();
         
-        if (this._representations.ContainsKey("select"))
+        if (this._representations.Select != null)
         {
-            var select = this._representations["select"];
+            var select = this._representations.Select;
 
             foreach (var (key, value) in select)
             {

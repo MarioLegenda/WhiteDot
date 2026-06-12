@@ -7,7 +7,7 @@ internal struct SelectRepository
 {
     private DbConnection _connection;
     private SelectRepresentation _representation;
-    private Dictionary<string, object> _parameters;
+    private Dictionary<string, object> _parameters = null!;
 
     public SelectRepository(DbConnection connection, SelectRepresentation representation, Dictionary<string, object> parameters)
     {

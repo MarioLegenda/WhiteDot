@@ -101,6 +101,15 @@ public class WhiteDot
                 "Invalid path format. Path must be in format, for example select.find_user");
         }
 
+        var type = splitted[0];
+        if (type != "select" && type != "insert" && path != "update" && path != "delete")
+        {
+            throw new InvalidPathException(
+                "Invalid path format. Path must be in format, for example select.find_user");
+        }
+
+        var name = splitted[1];
+
         return splitted;
     }
 }

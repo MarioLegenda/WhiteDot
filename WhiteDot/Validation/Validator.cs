@@ -5,19 +5,19 @@ namespace WhiteDot.Validation;
 internal class Validator
 {
     public static void Validate(
-        Dictionary<string, Dictionary<string, SelectDefinition>> data,
+        Root data,
         Dictionary<string, List<string>> parameters)
     {
-        if (data.ContainsKey("select"))
+        if (data.Select != null)
         {
-            SelectValidator simpleValidator = new SelectValidator(data["select"], parameters);
+            SelectValidator simpleValidator = new SelectValidator(data.Select, parameters);
                 
             simpleValidator.Validate();
         }
-        
-        if (data.ContainsKey("insert"))
+
+        if (data.Insert != null)
         {
-            InsertValidator insertValidator = new InsertValidator(data["insert"], parameters);
+            InsertValidator insertValidator = new InsertValidator(data.Insert, parameters);
                 
             insertValidator.Validate();
         }
