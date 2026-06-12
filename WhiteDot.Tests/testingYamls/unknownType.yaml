@@ -1,4 +1,4 @@
-select:
+unknown:
   find_user:
     sql: "SELECT * FROM employees.employee WHERE id = :id"
     properties:

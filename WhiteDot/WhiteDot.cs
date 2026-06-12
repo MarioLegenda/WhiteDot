@@ -28,13 +28,10 @@ public class WhiteDot
         
         var data = Deserializer.Deserialize(path);
 
-        var parameters = new Dictionary<string, List<string>>();
-        Validator.Validate(data, parameters);
+        Validator.Validate(data);
 
         var representationFactory = new RepresentationFactory(data);
-        Dictionary<string, SelectRepresentation> selectRepresentations = representationFactory.CreateSelectRepresentations(parameters);
-
-        this._selectRepresentations = selectRepresentations;
+        this._selectRepresentations = representationFactory.CreateSelectRepresentations();
     }
     
     public async Task ParseAsync()
@@ -48,11 +45,6 @@ public class WhiteDot
         if (pathSplitted[0] == "select")
         {
             var selectName = pathSplitted[1];
-            if (!this._selectRepresentations.ContainsKey(pathSplitted[1]))
-            {
-                throw new InvalidPathException($@"Invalid execution path. Path {pathSplitted[0]}.{pathSplitted[1]} does not exist.");
-            }
-            
             var representation = this._selectRepresentations[selectName];
 
             SelectRepository selectRepository =

@@ -6,13 +6,11 @@ namespace WhiteDot.Validation;
 
 internal class InsertValidator: IValidator
 {
-    private Dictionary<string, InsertDefinition> _definitions;
-    private Dictionary<string, List<string>> _parameters;
+    private readonly Dictionary<string, InsertDefinition> _definitions;
 
-    public InsertValidator(Dictionary<string, InsertDefinition> definitions, Dictionary<string, List<string>> parameters)
+    public InsertValidator(Dictionary<string, InsertDefinition> definitions)
     {
         this._definitions = definitions;
-        this._parameters = parameters;
     }
     
     public void Validate()
@@ -25,14 +23,6 @@ internal class InsertValidator: IValidator
             {
                 throw new InvalidConfigException("Invalid config. Expected key 'sql' is missing");
             }
-                
-            var sqlParameters = new List<string>();
-            foreach (Match match in Regex.Matches(sqlStatement.Sql, @":\w+", RegexOptions.IgnoreCase))
-            {
-                sqlParameters.Add(match.Value.TrimStart(':'));
-            }
-
-            this._parameters[key] = sqlParameters;
         }
     }
 }

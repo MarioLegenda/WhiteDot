@@ -7,13 +7,11 @@ namespace WhiteDot.Validation;
 
 internal class SelectValidator: IValidator
 {
-    private Dictionary<string, SelectDefinition> _definitions;
-    private Dictionary<string, List<string>> _parameters;
-
-    public SelectValidator(Dictionary<string, SelectDefinition> definitions, Dictionary<string, List<string>> parameters)
+    private readonly Dictionary<string, SelectDefinition> _definitions;
+    
+    public SelectValidator(Dictionary<string, SelectDefinition> definitions)
     {
         this._definitions = definitions;
-        this._parameters = parameters;
     }
     
     public void Validate()
@@ -26,15 +24,7 @@ internal class SelectValidator: IValidator
             {
                 throw new InvalidConfigException("Invalid config. Expected key 'sql' is missing");
             }
-                
-            var sqlParameters = new List<string>();
-            foreach (Match match in Regex.Matches(sqlStatement.Sql, @":\w+", RegexOptions.IgnoreCase))
-            {
-                sqlParameters.Add(match.Value.TrimStart(':'));
-            }
-
-            this._parameters[key] = sqlParameters;
-
+            
             if (sqlStatement.Properties is null)
             {
                 throw new InvalidConfigException("Invalid config. Key 'properties' cannot be empty");

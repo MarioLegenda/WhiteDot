@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using WhiteDot.YamlRoot;
 
 namespace WhiteDot.Representation;
@@ -12,16 +13,23 @@ internal class RepresentationFactory
         this._representations = representations;
     }
 
-    public Dictionary<string, SelectRepresentation> CreateSelectRepresentations(Dictionary<string, List<string>> parameters)
+    public Dictionary<string, SelectRepresentation> CreateSelectRepresentations()
     {
         var representations = new Dictionary<string, SelectRepresentation>();
-        
+
         if (this._representations.Select != null)
         {
             var select = this._representations.Select;
-
             foreach (var (key, value) in select)
             {
+                var parameters = new Dictionary<string, List<string>>();
+                var sqlParameters = new List<string>();
+                foreach (Match match in Regex.Matches(value.Sql, @":\w+", RegexOptions.IgnoreCase))
+                {
+                    sqlParameters.Add(match.Value.TrimStart(':'));
+                }
+                parameters[key] = sqlParameters;
+                
                 var properties = new List<Property>();
                 foreach (var prop in value.Properties)
                 {
