@@ -9,4 +9,3 @@ select:
       - hire_date to HireDate
 insert:
   insert_user:
-    sql: "INSERT INTO table (id, name) VALUES (:id, :name)"

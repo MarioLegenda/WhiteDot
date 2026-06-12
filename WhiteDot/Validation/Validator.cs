@@ -6,14 +6,14 @@ internal class Validator
 {
     public static void Validate(Root data)
     {
-        if (data.Select != null)
+        if (data.Select is not null)
         {
             SelectValidator simpleValidator = new SelectValidator(data.Select);
                 
             simpleValidator.Validate();
         }
 
-        if (data.Insert != null)
+        if (data.Insert is not null)
         {
             InsertValidator insertValidator = new InsertValidator(data.Insert);
                 

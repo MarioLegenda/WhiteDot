@@ -16,7 +16,7 @@ internal class RepresentationFactory
     {
         var representations = new Dictionary<string, SelectRepresentation>();
 
-        if (this._representations.Select != null)
+        if (this._representations.Select is not null)
         {
             foreach (var (key, value) in this._representations.Select)
             {

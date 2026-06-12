@@ -19,6 +19,11 @@ internal class InsertValidator: IValidator
         {
             var sqlStatement = this._definitions[key];
 
+            if (sqlStatement is null)
+            {
+                throw new InvalidConfigException("Invalid config. Expected key 'sql' is missing");
+            }
+
             if (string.IsNullOrWhiteSpace(sqlStatement.Sql))
             {
                 throw new InvalidConfigException("Invalid config. Expected key 'sql' is missing");

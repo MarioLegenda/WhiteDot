@@ -29,3 +29,5 @@ foreach (var item in model)
     Console.WriteLine(item.BirthDate);
     Console.WriteLine(item.HireDate);
 }
+
+await whiteDot.Read<List<EmployeeModel>>("insert.insert_user", new Dictionary<string, object>());
