@@ -58,10 +58,33 @@ public class WhiteDot
             SelectRepository selectRepository =
                 new SelectRepository(this._connection.DbConnection, representation, parameters);
 
-            await using DbDataReader reader = await selectRepository.SelectSingle();
+            Reflection.Reflection reflection = new Reflection.Reflection(representation, selectRepository);
+            object instance = await reflection.CreateInstance<T>();
 
-            Reflection.Reflection reflection = new Reflection.Reflection(representation, reader);
-            object instance = reflection.CreateSingleInstance<T>();
+            return (T)instance;
+        }
+
+        return default;
+    }
+    
+    public async Task<T?> Read<T>(string path)
+    {
+        var pathSplitted = this.validatePath(path);
+        if (pathSplitted[0] == "select")
+        {
+            var selectName = pathSplitted[1];
+            if (!this._selectRepresentations.ContainsKey(pathSplitted[1]))
+            {
+                throw new InvalidPathException($@"Invalid execution path. Path {pathSplitted[0]}.{pathSplitted[1]} does not exist.");
+            }
+            
+            var representation = this._selectRepresentations[selectName];
+
+            SelectRepository selectRepository =
+                new SelectRepository(this._connection.DbConnection, representation);
+
+            Reflection.Reflection reflection = new Reflection.Reflection(representation, selectRepository);
+            object instance = await reflection.CreateInstance<T>();
 
             return (T)instance;
         }

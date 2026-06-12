@@ -1,6 +1,7 @@
 using System.Data.Common;
 using Microsoft.VisualBasic;
 using WhiteDot.Exceptions;
+using WhiteDot.Repository;
 using WhiteDot.Representation;
 
 namespace WhiteDot.Reflection;
@@ -8,15 +9,15 @@ namespace WhiteDot.Reflection;
 internal class Reflection
 {
     private SelectRepresentation _representation;
-    private DbDataReader _reader;
+    private SelectRepository _repository;
 
-    public Reflection(SelectRepresentation representation, DbDataReader reader)
+    public Reflection(SelectRepresentation representation, SelectRepository repository)
     {
         this._representation = representation;
-        this._reader = reader;
+        this._repository = repository;
     }
 
-    public object CreateSingleInstance<T>()
+    public async Task<object> CreateInstance<T>()
     {
         Type? type = typeof(T);
         if (type == null)
@@ -24,6 +25,8 @@ internal class Reflection
 
         if (type.Name == "List`1")
         {
+            await using DbDataReader multipleReader = await this._repository.SelectMultiple();
+            
             Type genericArg = type.GetGenericArguments()[0];
             if (genericArg == null)
                 throw new TypeNotFoundException($"Type {nameof(genericArg)} not found.");
@@ -42,28 +45,33 @@ internal class Reflection
             object genericArgInstance = Activator.CreateInstance(genericArg)!;
             if (genericArgInstance == null)
                 throw new TypeNotFoundException($"Type could not be created into an instance.");
-            
-            this.AddToProperties(genericArg, genericArgInstance);
-            
-            addMethod.Invoke(listInstance, new[] { genericArgInstance });
 
+            while (await multipleReader.ReadAsync())
+            {
+                this.AddToProperties(genericArg, genericArgInstance, multipleReader);
+                
+                addMethod.Invoke(listInstance, new[] { genericArgInstance });
+            }
+            
             return listInstance;
         }
+        
+        await using DbDataReader singleReader = await this._repository.SelectSingle();
 
         object instance = Activator.CreateInstance(type)!;
         if (instance == null)
             throw new TypeNotFoundException($"Type could not be created into an instance.");
         
-        this.AddToProperties(type, instance);
+        this.AddToProperties(type, instance, singleReader);
 
         return instance;
     }
 
-    private void AddToProperties(Type type, object instance)
+    private void AddToProperties(Type type, object instance, DbDataReader reader)
     {
         foreach (var prop in this._representation.Properties)
         {
-            var from = this._reader[prop.From];
+            var from = reader[prop.From];
             var to = prop.To;
 
             var reflectedProperty = type.GetProperty(to);

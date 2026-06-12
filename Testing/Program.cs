@@ -19,11 +19,13 @@ var model = await whiteDot.Read<List<EmployeeModel>>("select.find_user", new Dic
 if (model is null)
     throw new Exception("model is null");
 
+Console.WriteLine(model.Count);
+
 foreach (var item in model)
 {
-Console.WriteLine(item.Id);
-Console.WriteLine(item.FirstName);
-Console.WriteLine(item.LastName);
-Console.WriteLine(item.BirthDate);
-Console.WriteLine(item.HireDate);
+    Console.WriteLine(item.Id);
+    Console.WriteLine(item.FirstName);
+    Console.WriteLine(item.LastName);
+    Console.WriteLine(item.BirthDate);
+    Console.WriteLine(item.HireDate);
 }
