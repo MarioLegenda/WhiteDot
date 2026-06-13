@@ -77,7 +77,7 @@ public class ExecutionTests
         var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
         await whiteDot.OpenConnection();
         
-        int rowsAffected = await whiteDot.Write("insert.insert_user", new Dictionary<string, object>()
+        int rowsAffected = await whiteDot.Write("write.insert_user", new Dictionary<string, object>()
         {
             {"first_name", "Mario"},
             {"last_name", "Škrlec"},

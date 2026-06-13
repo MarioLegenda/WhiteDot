@@ -75,7 +75,7 @@ internal struct SelectRepository
                 param.Value = this._parameters[parameter];
                 
                 command.Parameters.Add(param);
-            0}
+            }
         }
         
         DbDataReader reader =

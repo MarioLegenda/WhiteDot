@@ -7,6 +7,6 @@ select:
       - id to Id
       - birth_date to BirthDate
       - hire_date to HireDate
-insert:
+write:
   insert_user:
     sql: "INSERT INTO table (id, name) VALUES (:id, :name)"

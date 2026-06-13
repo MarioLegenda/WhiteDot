@@ -4,11 +4,11 @@ using WhiteDot.YamlRoot;
 
 namespace WhiteDot.Validation;
 
-internal class InsertValidator: IValidator
+internal class WriteValidator: IValidator
 {
-    private readonly Dictionary<string, InsertDefinition> _definitions;
+    private readonly Dictionary<string, WriteDefinition> _definitions;
 
-    public InsertValidator(Dictionary<string, InsertDefinition> definitions)
+    public WriteValidator(Dictionary<string, WriteDefinition> definitions)
     {
         this._definitions = definitions;
     }

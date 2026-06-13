@@ -15,6 +15,6 @@ select:
       - id to Id
       - birth_date to BirthDate
       - hire_date to HireDate
-insert:
+write:
   insert_user:
     sql: "INSERT INTO employees.employee (first_name, last_name, birth_date, gender, hire_date) VALUES (@first_name, @last_name, @birth_date, @gender::employees.employee_gender, @hire_date)"

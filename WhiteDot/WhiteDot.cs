@@ -14,7 +14,7 @@ public class WhiteDot
 {
     private readonly IConnection _connection;
     private readonly Dictionary<string, SelectRepresentation> _selectRepresentations;
-    private readonly Dictionary<string, InsertRepresentation> _insertRepresentations;
+    private readonly Dictionary<string, WriteRepresentation> _writeRepresentations;
 
     public WhiteDot(string path, IConnection connection)
     {
@@ -31,7 +31,7 @@ public class WhiteDot
 
         var representationFactory = new RepresentationFactory(data);
         this._selectRepresentations = representationFactory.CreateSelectRepresentations();
-        this._insertRepresentations = representationFactory.CreateInsertRepresentations();
+        this._writeRepresentations = representationFactory.CreateInsertRepresentations();
     }
     
     public async Task OpenConnection()
@@ -61,12 +61,12 @@ public class WhiteDot
     public async Task<int> Write(string path, Dictionary<string, object>? parameters = null)
     {
         var pathSplitted = this.validatePath(path);
-        if (pathSplitted[0] != "insert" && pathSplitted[0] != "update" && pathSplitted[0] != "delete")
+        if (pathSplitted[0] != "write")
         {
-            throw new InvalidPathException("A write operation must be either insert, update or delete representation");
+            throw new InvalidPathException("A write operation must be a write operation");
         }
         
-        var representation = this._insertRepresentations[pathSplitted[1]];
+        var representation = this._writeRepresentations[pathSplitted[1]];
         
         InsertRepository repository =
             new InsertRepository(this._connection.DbConnection, representation, parameters);
@@ -84,7 +84,7 @@ public class WhiteDot
         }
 
         var type = splitted[0];
-        if (type != "select" && type != "insert" && path != "update" && path != "delete")
+        if (type != "select" && type != "write")
         {
             throw new InvalidPathException(
                 "Invalid path format. Path must be in format, for example select.find_user");
@@ -96,7 +96,7 @@ public class WhiteDot
             throw new InvalidPathException($@"Invalid execution path. Path {type}.{name} does not exist.");
         }
 
-        if (type == "insert" && !this._insertRepresentations.ContainsKey(name))
+        if (type == "write" && !this._writeRepresentations.ContainsKey(name))
         {
             throw new InvalidPathException($@"Invalid execution path. Path {type}.{name} does not exist.");
         }

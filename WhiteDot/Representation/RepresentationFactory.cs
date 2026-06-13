@@ -31,15 +31,15 @@ internal class RepresentationFactory
         return representations;
     }
 
-    public Dictionary<string, InsertRepresentation> CreateInsertRepresentations()
+    public Dictionary<string, WriteRepresentation> CreateInsertRepresentations()
     {
-        var representations = new Dictionary<string, InsertRepresentation>();
+        var representations = new Dictionary<string, WriteRepresentation>();
 
-        if (this._representations.Insert is not null)
+        if (this._representations.Write is not null)
         {
-            foreach (var (key, value) in this._representations.Insert)
+            foreach (var (key, value) in this._representations.Write)
             {
-                representations[key] = new InsertRepresentation(
+                representations[key] = new WriteRepresentation(
                     value.Sql, 
                     this.createParameters(value.Sql)
                 );

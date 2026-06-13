@@ -30,7 +30,7 @@ foreach (var item in model)
     Console.WriteLine(item.HireDate);
 }
 
-int rowsAffected = await whiteDot.Write("insert.insert_user", new Dictionary<string, object>()
+int rowsAffected = await whiteDot.Write("write.insert_user", new Dictionary<string, object>()
 {
     {"first_name", "Mario"},
     {"last_name", "Škrlec"},

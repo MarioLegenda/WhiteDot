@@ -94,7 +94,7 @@ public class PathTest
         {
             var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
             await whiteDot.OpenConnection();
-            await whiteDot.Select<EmployeeModel>("insert.insert_user", new Dictionary<string, object>()
+            await whiteDot.Select<EmployeeModel>("write.insert_user", new Dictionary<string, object>()
             {
                 {"id",  10001},
             });
@@ -144,12 +144,12 @@ public class PathTest
         {
             var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
             await whiteDot.OpenConnection();
-            await whiteDot.Write("insert.not_exists", new Dictionary<string, object>()
+            await whiteDot.Write("write.not_exists", new Dictionary<string, object>()
             {
                 {"id",  10001},
             });
         });
         
-        Assert.Equal("Invalid execution path. Path insert.not_exists does not exist.", ex.Message);
+        Assert.Equal("Invalid execution path. Path write.not_exists does not exist.", ex.Message);
     }
 }

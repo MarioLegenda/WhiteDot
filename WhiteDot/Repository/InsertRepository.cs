@@ -6,16 +6,16 @@ namespace WhiteDot.Repository;
 internal class InsertRepository
 {
     private DbConnection _connection;
-    private InsertRepresentation _representation;
+    private WriteRepresentation _representation;
     private Dictionary<string, object>? _parameters = null!;
     
-    public InsertRepository(DbConnection connection, InsertRepresentation representation)
+    public InsertRepository(DbConnection connection, WriteRepresentation representation)
     {
         this._connection = connection;
         this._representation = representation;
     }
     
-    public InsertRepository(DbConnection connection, InsertRepresentation representation, Dictionary<string, object>? parameters)
+    public InsertRepository(DbConnection connection, WriteRepresentation representation, Dictionary<string, object>? parameters)
     {
         this._connection = connection;
         this._representation = representation;

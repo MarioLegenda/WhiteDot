@@ -13,9 +13,9 @@ internal class Validator
             simpleValidator.Validate();
         }
 
-        if (data.Insert is not null)
+        if (data.Write is not null)
         {
-            InsertValidator insertValidator = new InsertValidator(data.Insert);
+            WriteValidator insertValidator = new WriteValidator(data.Write);
                 
             insertValidator.Validate();
         }
