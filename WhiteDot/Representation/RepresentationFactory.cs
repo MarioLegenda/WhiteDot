@@ -31,7 +31,7 @@ internal class RepresentationFactory
         return representations;
     }
 
-    public Dictionary<string, WriteRepresentation> CreateInsertRepresentations()
+    public Dictionary<string, WriteRepresentation> CreateWriteRepresentations()
     {
         var representations = new Dictionary<string, WriteRepresentation>();
 
@@ -65,7 +65,7 @@ internal class RepresentationFactory
         var properties = new List<Property>();
         foreach (var prop in props)
         {
-            var parts = prop.Split(" to ");
+            var parts = prop.Split(":");
 
             var from = parts[0];
             var to = parts[1];

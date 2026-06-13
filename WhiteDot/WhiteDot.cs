@@ -31,7 +31,7 @@ public class WhiteDot
 
         var representationFactory = new RepresentationFactory(data);
         this._selectRepresentations = representationFactory.CreateSelectRepresentations();
-        this._writeRepresentations = representationFactory.CreateInsertRepresentations();
+        this._writeRepresentations = representationFactory.CreateWriteRepresentations();
     }
     
     public async Task OpenConnection()
