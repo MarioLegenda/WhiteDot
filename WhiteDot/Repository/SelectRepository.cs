@@ -65,16 +65,19 @@ internal struct SelectRepository
         }
 
         command.CommandText = sql;
-        
-        foreach (var parameter in this._representation.Parameters)
+
+        if (this._parameters is not null)
         {
-            DbParameter param = command.CreateParameter();
-            param.ParameterName = parameter;
-            param.Value = this._parameters[parameter];
+            foreach (var parameter in this._representation.Parameters)
+            {
+                DbParameter param = command.CreateParameter();
+                param.ParameterName = parameter;
+                param.Value = this._parameters[parameter];
                 
-            command.Parameters.Add(param);
+                command.Parameters.Add(param);
+            0}
         }
-            
+        
         DbDataReader reader =
             await command.ExecuteReaderAsync();
 

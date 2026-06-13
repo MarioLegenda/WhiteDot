@@ -39,7 +39,7 @@ public class WhiteDot
         await this._connection.OpenConnection();
     }
 
-    public async Task<T?> Read<T>(string path, Dictionary<string, object>? parameters = null)
+    public async Task<T?> Select<T>(string path, Dictionary<string, object>? parameters = null)
     {
         var pathSplitted = this.validatePath(path);
         if (pathSplitted[0] != "select")
