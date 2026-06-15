@@ -18,3 +18,7 @@ select:
 write:
   insert_user:
     sql: "INSERT INTO employees.employee (first_name, last_name, birth_date, gender, hire_date) VALUES (@first_name, @last_name, @birth_date, @gender::employees.employee_gender, @hire_date)"
+  update_user:
+    sql: "UPDATE employees.employee SET first_name = @first_name, last_name = @last_name WHERE first_name = @where_first_name AND last_name = @where_last_name"
+  delete_user:
+    sql: "DELETE FROM employees.employee WHERE first_name = @name AND last_name = @last_name"

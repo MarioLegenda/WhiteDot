@@ -55,8 +55,12 @@ internal class Reflection
             
             return listInstance;
         }
-        
-        await using DbDataReader singleReader = await this._repository.SelectSingle();
+
+        var (singleReader, exists) = await this._repository.SelectSingle();
+        if (!exists)
+        {
+            return null;
+        }
 
         object instance = Activator.CreateInstance(type)!;
         if (instance == null)

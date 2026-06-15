@@ -22,7 +22,7 @@ internal struct SelectRepository
         this._representation = representation;
     }
     
-    public async Task<DbDataReader> SelectSingle()
+    public async Task<(DbDataReader, bool)> SelectSingle()
     {
         await using DbCommand command = this._connection.CreateCommand();
 
@@ -49,9 +49,9 @@ internal struct SelectRepository
         DbDataReader reader =
             await command.ExecuteReaderAsync();
             
-        await reader.ReadAsync();
+        var exists = await reader.ReadAsync();
 
-        return reader;
+        return (reader, exists);
     }
 
     public async Task<DbDataReader> SelectMultiple()
