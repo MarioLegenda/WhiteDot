@@ -7,6 +7,29 @@ namespace WhiteDot.Tests;
 public class ExecutionTests
 {
     [Fact]
+    public async Task Should_Return_Null_For_Empty_Result_For_Single_Result()
+    {
+        string connectionString = "Host=localhost;Port=5432;Database=employees;Username=postgres;Password=password";
+
+        DbProviderFactory factory = NpgsqlFactory.Instance;
+        
+        var path = Path.Combine(
+            AppContext.BaseDirectory,
+            "testingYamls",
+            "execution.yaml");
+
+        var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
+        await whiteDot.OpenConnection();
+
+        var model = await whiteDot.Select<EmployeeModel>("select.find_user", new Dictionary<string, object>()
+        {
+            {"id",  789787978},
+        });
+
+        Assert.Null(model);
+    }
+    
+    [Fact]
     public async Task Should_Execute_Single_Select_On_A_Given_Path()
     {
         string connectionString = "Host=localhost;Port=5432;Database=employees;Username=postgres;Password=password";
@@ -32,6 +55,30 @@ public class ExecutionTests
         Assert.NotEmpty(model.LastName);
         Assert.IsType<DateOnly>(model.BirthDate);
         Assert.IsType<DateOnly>(model.HireDate);
+    }
+    
+    [Fact]
+    public async Task Should_Return_Null_For_Multiple_Select()
+    {
+        string connectionString = "Host=localhost;Port=5432;Database=employees;Username=postgres;Password=password";
+
+        DbProviderFactory factory = NpgsqlFactory.Instance;
+        
+        var path = Path.Combine(
+            AppContext.BaseDirectory,
+            "testingYamls",
+            "execution.yaml");
+
+        var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
+        await whiteDot.OpenConnection();
+
+        var model = await whiteDot.Select<List<EmployeeModel>>("select.find_user", new Dictionary<string, object>()
+        {
+            {"id",  789787978},
+        });
+
+        Assert.NotNull(model);
+        Assert.True(model.Count == 0);
     }
     
     [Fact]
