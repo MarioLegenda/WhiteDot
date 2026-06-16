@@ -59,7 +59,7 @@ internal class Reflection
         var (singleReader, exists) = await this._repository.SelectSingle();
         if (!exists)
         {
-            return null;
+            return null!;
         }
 
         object instance = Activator.CreateInstance(type)!;

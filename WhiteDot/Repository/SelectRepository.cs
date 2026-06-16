@@ -26,13 +26,7 @@ internal struct SelectRepository
     {
         await using DbCommand command = this._connection.CreateCommand();
 
-        var sql = this._representation.Sql;
-        foreach (var parameter in this._representation.Parameters)
-        {
-            sql = sql.Replace(":" + parameter, "@" + parameter);
-        }
-
-        command.CommandText = sql;
+        command.CommandText = this._representation.Sql;
 
         if (this._parameters != null)
         {
