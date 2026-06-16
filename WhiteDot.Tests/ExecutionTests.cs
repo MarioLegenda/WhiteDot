@@ -196,4 +196,60 @@ public class ExecutionTests
         
         Assert.True(rowsAffected > 0);
     }
+    
+    [Fact]
+    public async Task Should_Execute_Single_Select_On_A_Given_Path_From_Imported_File_Level_One()
+    {
+        string connectionString = "Host=localhost;Port=5432;Database=employees;Username=postgres;Password=password";
+
+        DbProviderFactory factory = NpgsqlFactory.Instance;
+        
+        var path = Path.Combine(
+            AppContext.BaseDirectory,
+            "testingYamls",
+            "execution.yaml");
+
+        var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
+        await whiteDot.OpenConnection();
+
+        var model = await whiteDot.Select<EmployeeModel>("select.find_by_id", new Dictionary<string, object>()
+        {
+            {"id",  10001},
+        });
+
+        Assert.NotNull(model);
+        
+        Assert.NotEmpty(model.FirstName);
+        Assert.NotEmpty(model.LastName);
+        Assert.IsType<DateOnly>(model.BirthDate);
+        Assert.IsType<DateOnly>(model.HireDate);
+    }
+    
+    [Fact]
+    public async Task Should_Execute_Single_Select_On_A_Given_Path_From_Imported_File_Level_Two()
+    {
+        string connectionString = "Host=localhost;Port=5432;Database=employees;Username=postgres;Password=password";
+
+        DbProviderFactory factory = NpgsqlFactory.Instance;
+        
+        var path = Path.Combine(
+            AppContext.BaseDirectory,
+            "testingYamls",
+            "execution.yaml");
+
+        var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
+        await whiteDot.OpenConnection();
+
+        var model = await whiteDot.Select<EmployeeModel>("select.find_single", new Dictionary<string, object>()
+        {
+            {"id",  10001},
+        });
+
+        Assert.NotNull(model);
+        
+        Assert.NotEmpty(model.FirstName);
+        Assert.NotEmpty(model.LastName);
+        Assert.IsType<DateOnly>(model.BirthDate);
+        Assert.IsType<DateOnly>(model.HireDate);
+    }
 }
