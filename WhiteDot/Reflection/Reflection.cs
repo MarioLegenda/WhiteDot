@@ -68,6 +68,8 @@ internal class Reflection
         
         this.AddToProperties(type, instance, singleReader);
 
+        await singleReader.DisposeAsync();
+
         return instance;
     }
 

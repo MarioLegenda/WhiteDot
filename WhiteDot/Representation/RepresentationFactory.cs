@@ -5,48 +5,45 @@ namespace WhiteDot.Representation;
 
 internal class RepresentationFactory
 {
-    private readonly Root _representations;
-    
-    public RepresentationFactory(Root representations)
+    private Dictionary<string, SelectRepresentation> _selectRepresentations;
+    private Dictionary<string, WriteRepresentation> _writeRepresentations;
+
+    public RepresentationFactory(
+        Dictionary<string, SelectRepresentation> selectRepresentations, 
+        Dictionary<string, WriteRepresentation> writeRepresentations
+    )
     {
-        this._representations = representations;
+        this._selectRepresentations = selectRepresentations;
+        this._writeRepresentations = writeRepresentations;
     }
 
-    public Dictionary<string, SelectRepresentation> CreateSelectRepresentations()
+    public void AddToSelectRepresentation(Root data)
     {
-        var representations = new Dictionary<string, SelectRepresentation>();
-
-        if (this._representations.Select is not null)
+        if (data.Select is not null)
         {
-            foreach (var (key, value) in this._representations.Select)
+            foreach (var (key, value) in data.Select)
             {
-                representations[key] = new SelectRepresentation(
+                this._selectRepresentations[key] = new SelectRepresentation(
                     value.Sql,
                     this.createProperties(value.Properties),
                     this.createParameters(value.Sql)
                 );
             }
         }
-
-        return representations;
     }
 
-    public Dictionary<string, WriteRepresentation> CreateWriteRepresentations()
+    public void AddToWriteRepresentation(Root data)
     {
-        var representations = new Dictionary<string, WriteRepresentation>();
-
-        if (this._representations.Write is not null)
+        if (data.Write is not null)
         {
-            foreach (var (key, value) in this._representations.Write)
+            foreach (var (key, value) in data.Write)
             {
-                representations[key] = new WriteRepresentation(
+                this._writeRepresentations[key] = new WriteRepresentation(
                     value.Sql, 
                     this.createParameters(value.Sql)
                 );
             }
         }
-
-        return representations;
     }
 
     private List<string> createParameters(string sql)

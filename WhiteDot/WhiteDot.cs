@@ -13,25 +13,16 @@ namespace WhiteDot;
 public class WhiteDot
 {
     private readonly IConnection _connection;
-    private readonly Dictionary<string, SelectRepresentation> _selectRepresentations;
-    private readonly Dictionary<string, WriteRepresentation> _writeRepresentations;
+    private Dictionary<string, SelectRepresentation> _selectRepresentations;
+    private Dictionary<string, WriteRepresentation> _writeRepresentations;
 
     public WhiteDot(string path, IConnection connection)
     {
         this._connection = connection;
-        
-        if (!File.Exists(path))
-        {
-            throw new InvalidPathException($@"Invalid path. Path {path} does not exist.");
-        }
-        
-        var data = Deserializer.Deserialize(path);
 
-        Validator.Validate(data);
-
-        var representationFactory = new RepresentationFactory(data);
-        this._selectRepresentations = representationFactory.CreateSelectRepresentations();
-        this._writeRepresentations = representationFactory.CreateWriteRepresentations();
+        this._selectRepresentations = new Dictionary<string, SelectRepresentation>();
+        this._writeRepresentations = new Dictionary<string, WriteRepresentation>();
+        this.handleFile(path);
     }
     
     public async Task OpenConnection()
@@ -68,10 +59,10 @@ public class WhiteDot
         
         var representation = this._writeRepresentations[pathSplitted[1]];
         
-        InsertRepository repository =
-            new InsertRepository(this._connection.DbConnection, representation, parameters);
+        WriteRepository repository =
+            new WriteRepository(this._connection.DbConnection, representation, parameters);
 
-        return await repository.Insert();
+        return await repository.Write();
     }
 
     private string[] validatePath(string path)
@@ -102,5 +93,28 @@ public class WhiteDot
         }
         
         return splitted;
+    }
+
+    private void handleFile(string path)
+    {
+        if (!File.Exists(path))
+        {
+            throw new InvalidPathException($@"Invalid path. Path {path} does not exist.");
+        }
+        
+        var data = Deserializer.Deserialize(path);
+
+        if (!string.IsNullOrWhiteSpace(data.Import))
+        {
+            this.handleFile(data.Import);
+        }
+        
+        Validator.Validate(data);
+
+        RepresentationFactory representationFactory =
+            new RepresentationFactory(this._selectRepresentations, this._writeRepresentations);
+        
+        representationFactory.AddToSelectRepresentation(data);
+        representationFactory.AddToWriteRepresentation(data);
     }
 }

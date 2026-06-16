@@ -11,7 +11,7 @@ DbProviderFactory factory = NpgsqlFactory.Instance;
 var whiteDot = new WhiteDot.WhiteDot("white_dot.yml", new Connection(connectionString, factory));
 await whiteDot.OpenConnection();
 
-var model = await whiteDot.Select<List<EmployeeModel>>("select.find_user", new Dictionary<string, object>()
+var model = await whiteDot.Select<EmployeeModel>("select.find_first_user", new Dictionary<string, object>()
 {
     {"id",  10001},
 });
@@ -19,6 +19,13 @@ var model = await whiteDot.Select<List<EmployeeModel>>("select.find_user", new D
 if (model is null)
     throw new Exception("model is null");
 
+Console.WriteLine(model.Id);
+Console.WriteLine(model.FirstName);
+Console.WriteLine(model.LastName);
+Console.WriteLine(model.BirthDate);
+Console.WriteLine(model.HireDate);
+
+/*
 Console.WriteLine(model.Count);
 
 foreach (var item in model)
@@ -29,6 +36,7 @@ foreach (var item in model)
     Console.WriteLine(item.BirthDate);
     Console.WriteLine(item.HireDate);
 }
+*/
 
 int rowsAffected = await whiteDot.Write("write.insert_user", new Dictionary<string, object>()
 {

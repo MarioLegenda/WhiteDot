@@ -3,26 +3,26 @@ using WhiteDot.Representation;
 
 namespace WhiteDot.Repository;
 
-internal class InsertRepository
+internal class WriteRepository
 {
     private DbConnection _connection;
     private WriteRepresentation _representation;
     private Dictionary<string, object>? _parameters = null!;
     
-    public InsertRepository(DbConnection connection, WriteRepresentation representation)
+    public WriteRepository(DbConnection connection, WriteRepresentation representation)
     {
         this._connection = connection;
         this._representation = representation;
     }
     
-    public InsertRepository(DbConnection connection, WriteRepresentation representation, Dictionary<string, object>? parameters)
+    public WriteRepository(DbConnection connection, WriteRepresentation representation, Dictionary<string, object>? parameters)
     {
         this._connection = connection;
         this._representation = representation;
         this._parameters = parameters;
     }
     
-    public async Task<int> Insert()
+    public async Task<int> Write()
     {
         await using DbCommand command = this._connection.CreateCommand();
 
