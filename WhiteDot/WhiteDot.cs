@@ -38,12 +38,18 @@ public class WhiteDot
             throw new InvalidPathException("A read operation must be a select representation");
         }
 
+        if (parameters is not null && parameters.ContainsKey("if_exists") &&
+            parameters["if_exists"] is Dictionary<string, object>)
+        {
+            
+        }
+
         var representation = this._selectRepresentations[pathSplitted[1]];
 
         SelectRepository repository =
             new SelectRepository(this._connection.DbConnection, representation, parameters);
 
-        Reflection.Reflection reflection = new Reflection.Reflection(representation, repository);
+        Reflection.Reflection reflection = new Reflection.Reflection(representation, await repository.GetReader());
         object instance = await reflection.CreateInstance<T>();
 
         return (T)instance;

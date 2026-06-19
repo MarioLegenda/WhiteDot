@@ -9,12 +9,12 @@ namespace WhiteDot.Reflection;
 internal class Reflection
 {
     private SelectRepresentation _representation;
-    private SelectRepository _repository;
+    private DbDataReader _dbDataReader;
 
-    public Reflection(SelectRepresentation representation, SelectRepository repository)
+    public Reflection(SelectRepresentation representation, DbDataReader repository)
     {
         this._representation = representation;
-        this._repository = repository;
+        this._dbDataReader = repository;
     }
 
     public async Task<object> CreateInstance<T>()
@@ -25,8 +25,6 @@ internal class Reflection
 
         if (type.Name == "List`1")
         {
-            await using DbDataReader multipleReader = await this._repository.SelectMultiple();
-            
             Type genericArg = type.GetGenericArguments()[0];
             if (genericArg == null)
                 throw new TypeNotFoundException($"Type {nameof(genericArg)} not found.");
@@ -46,17 +44,19 @@ internal class Reflection
             if (genericArgInstance == null)
                 throw new TypeNotFoundException($"Type could not be created into an instance.");
 
-            while (await multipleReader.ReadAsync())
+            while (await this._dbDataReader.ReadAsync())
             {
-                this.AddToProperties(genericArg, genericArgInstance, multipleReader);
+                this.AddToProperties(genericArg, genericArgInstance, this._dbDataReader);
                 
                 addMethod.Invoke(listInstance, new[] { genericArgInstance });
             }
+
+            await this._dbDataReader.DisposeAsync();
             
             return listInstance;
         }
 
-        var (singleReader, exists) = await this._repository.SelectSingle();
+        var exists = await this._dbDataReader.ReadAsync();
         if (!exists)
         {
             return null!;
@@ -66,9 +66,9 @@ internal class Reflection
         if (instance == null)
             throw new TypeNotFoundException($"Type could not be created into an instance.");
         
-        this.AddToProperties(type, instance, singleReader);
+        this.AddToProperties(type, instance, this._dbDataReader);
 
-        await singleReader.DisposeAsync();
+        await this._dbDataReader.DisposeAsync();
 
         return instance;
     }

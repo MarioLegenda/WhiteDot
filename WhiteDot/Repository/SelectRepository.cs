@@ -15,14 +15,8 @@ internal struct SelectRepository
         this._representation = representation;
         this._parameters = parameters;
     }
-    
-    public SelectRepository(DbConnection connection, SelectRepresentation representation)
-    {
-        this._connection = connection;
-        this._representation = representation;
-    }
-    
-    public async Task<(DbDataReader, bool)> SelectSingle()
+
+    public async Task<DbDataReader> GetReader()
     {
         await using DbCommand command = this._connection.CreateCommand();
 
@@ -42,23 +36,15 @@ internal struct SelectRepository
 
         DbDataReader reader =
             await command.ExecuteReaderAsync();
-            
-        var exists = await reader.ReadAsync();
 
-        return (reader, exists);
+        return reader;
     }
 
     public async Task<DbDataReader> SelectMultiple()
     {
         await using DbCommand command = this._connection.CreateCommand();
 
-        var sql = this._representation.Sql;
-        foreach (var parameter in this._representation.Parameters)
-        {
-            sql = sql.Replace(":" + parameter, "@" + parameter);
-        }
-
-        command.CommandText = sql;
+        command.CommandText = this._representation.Sql;
 
         if (this._parameters is not null)
         {

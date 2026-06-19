@@ -14,6 +14,10 @@ await whiteDot.OpenConnection();
 var model = await whiteDot.Select<EmployeeModel>("select.find_user", new Dictionary<string, object>()
 {
     {"id",  10001},
+    {"if_exists", new Dictionary<string, object>()
+    {
+        {"id", 10001}
+    }}
 });
 
 if (model is null)
