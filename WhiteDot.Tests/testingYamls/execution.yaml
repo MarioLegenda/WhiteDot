@@ -9,6 +9,8 @@ select:
       - id:Id
       - birth_date:BirthDate
       - hire_date:HireDate
+    if_exists:
+      sql: "SELECT id FROM employees.employee WHERE id = @id"
   find_many_users:
     sql: "SELECT * FROM employees.employee LIMIT 10"
     properties:

@@ -252,4 +252,63 @@ public class ExecutionTests
         Assert.IsType<DateOnly>(model.BirthDate);
         Assert.IsType<DateOnly>(model.HireDate);
     }
+    
+    [Fact]
+    public async Task Should_Return_Null_If_IfExists_Does_Not_Return_A_Result()
+    {
+        string connectionString = "Host=localhost;Port=5432;Database=employees;Username=postgres;Password=password";
+
+        DbProviderFactory factory = NpgsqlFactory.Instance;
+        
+        var path = Path.Combine(
+            AppContext.BaseDirectory,
+            "testingYamls",
+            "execution.yaml");
+
+        var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
+        await whiteDot.OpenConnection();
+
+        var model = await whiteDot.Select<EmployeeModel>("select.find_user", new Dictionary<string, object>()
+        {
+            {"id",  10001},
+            {"if_exists", new Dictionary<string, object>()
+            {
+                {"id", 324535345}
+            }}
+        });
+
+        Assert.Null(model);
+    }
+    
+    [Fact]
+    public async Task Should_Return_A_Model_If_IfExists_Exists()
+    {
+        string connectionString = "Host=localhost;Port=5432;Database=employees;Username=postgres;Password=password";
+
+        DbProviderFactory factory = NpgsqlFactory.Instance;
+        
+        var path = Path.Combine(
+            AppContext.BaseDirectory,
+            "testingYamls",
+            "execution.yaml");
+
+        var whiteDot = new WhiteDot(path, new Connection(connectionString, factory));
+        await whiteDot.OpenConnection();
+
+        var model = await whiteDot.Select<EmployeeModel>("select.find_single", new Dictionary<string, object>()
+        {
+            {"id",  10001},
+            {"if_exists", new Dictionary<string, object>()
+            {
+                {"id", 10001}
+            }}
+        });
+
+        Assert.NotNull(model);
+        
+        Assert.NotEmpty(model.FirstName);
+        Assert.NotEmpty(model.LastName);
+        Assert.IsType<DateOnly>(model.BirthDate);
+        Assert.IsType<DateOnly>(model.HireDate);
+    }
 }
