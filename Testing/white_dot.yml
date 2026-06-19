@@ -11,6 +11,7 @@ select:
       - hire_date:HireDate
     if_exists:
       sql: "SELECT id FROM employees.employee WHERE id = @id"
+    if_succeeds: write.insert_user
 write:
   insert_user:
     sql: "INSERT INTO employees.employee (first_name, last_name, birth_date, gender, hire_date) VALUES (@first_name, @last_name, @birth_date, @gender::employees.employee_gender, @hire_date)"

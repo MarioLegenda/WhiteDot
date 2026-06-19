@@ -53,7 +53,7 @@ public class WhiteDot
             await reader.DisposeAsync();
             if (!exists)
             {
-                return null!;
+                return null;
             }
         }
         
