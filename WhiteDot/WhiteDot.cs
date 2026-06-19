@@ -37,7 +37,7 @@ public class WhiteDot
         {
             throw new InvalidPathException("A read operation must be a select representation");
         }
-        
+
         var representation = this._selectRepresentations[pathSplitted[1]];
 
         SelectRepository repository =

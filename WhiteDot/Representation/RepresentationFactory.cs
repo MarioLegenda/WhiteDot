@@ -23,6 +23,10 @@ internal class RepresentationFactory
         {
             foreach (var (key, value) in data.Select)
             {
+                if (value.IfExists is not null)
+                {
+                    Console.WriteLine(value.IfExists.Sql);
+                }
                 this._selectRepresentations[key] = new SelectRepresentation(
                     value.Sql,
                     this.createProperties(value.Properties),
