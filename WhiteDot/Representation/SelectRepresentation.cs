@@ -1,6 +1,6 @@
 namespace WhiteDot.Representation;
 
-internal class SelectRepresentation
+internal class SelectRepresentation: IRepresentation
 {
     public string Sql { get; }
     public List<string> Parameters { get; }

@@ -13,14 +13,14 @@ namespace WhiteDot;
 public class WhiteDot
 {
     private readonly IConnection _connection;
-    private Dictionary<string, SelectRepresentation> _selectRepresentations;
+    private Dictionary<string, IRepresentation> _selectRepresentations;
     private Dictionary<string, WriteRepresentation> _writeRepresentations;
 
     public WhiteDot(string path, IConnection connection)
     {
         this._connection = connection;
 
-        this._selectRepresentations = new Dictionary<string, SelectRepresentation>();
+        this._selectRepresentations = new Dictionary<string, IRepresentation>();
         this._writeRepresentations = new Dictionary<string, WriteRepresentation>();
         this.handleFile(path);
     }
@@ -47,9 +47,9 @@ public class WhiteDot
         var representation = this._selectRepresentations[pathSplitted[1]];
 
         SelectRepository repository =
-            new SelectRepository(this._connection.DbConnection, representation, parameters);
+            new SelectRepository(this._connection.DbConnection, representation);
 
-        Reflection.Reflection reflection = new Reflection.Reflection(representation, await repository.GetReader());
+        Reflection.Reflection reflection = new Reflection.Reflection(representation, await repository.GetReader(representation.Sql, parameters));
         object instance = await reflection.CreateInstance<T>();
 
         return (T)instance;
