@@ -21,7 +21,10 @@ var model = await whiteDot.Select<EmployeeModel>("select.find_user", new Diction
 });
 
 if (model is null)
-    throw new Exception("model is null");
+{
+    Console.WriteLine("model is null");
+    return;
+}
 
 Console.WriteLine(model.Id);
 Console.WriteLine(model.FirstName);

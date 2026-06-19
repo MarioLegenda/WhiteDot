@@ -8,10 +8,10 @@ namespace WhiteDot.Reflection;
 
 internal class Reflection
 {
-    private IRepresentation _representation;
+    private SelectRepresentation _representation;
     private DbDataReader _dbDataReader;
 
-    public Reflection(IRepresentation representation, DbDataReader repository)
+    public Reflection(SelectRepresentation representation, DbDataReader repository)
     {
         this._representation = representation;
         this._dbDataReader = repository;

@@ -5,11 +5,11 @@ namespace WhiteDot.Representation;
 
 internal class RepresentationFactory
 {
-    private Dictionary<string, IRepresentation> _selectRepresentations;
+    private Dictionary<string, SelectRepresentation> _selectRepresentations;
     private Dictionary<string, WriteRepresentation> _writeRepresentations;
 
     public RepresentationFactory(
-        Dictionary<string, IRepresentation> selectRepresentations, 
+        Dictionary<string, SelectRepresentation> selectRepresentations, 
         Dictionary<string, WriteRepresentation> writeRepresentations
     )
     {
@@ -23,10 +23,18 @@ internal class RepresentationFactory
         {
             foreach (var (key, value) in data.Select)
             {
+                IfExistsRepresentation ifExistsRepresentation = null!;
+                if (value.IfExists is not null)
+                {
+                    ifExistsRepresentation =
+                        new IfExistsRepresentation(value.IfExists.Sql, this.createParameters(value.IfExists.Sql));
+                }
+                
                 this._selectRepresentations[key] = new SelectRepresentation(
                     value.Sql,
                     this.createProperties(value.Properties),
-                    this.createParameters(value.Sql)
+                    this.createParameters(value.Sql),
+                    ifExistsRepresentation
                 );
             }
         }

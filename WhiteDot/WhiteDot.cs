@@ -13,14 +13,14 @@ namespace WhiteDot;
 public class WhiteDot
 {
     private readonly IConnection _connection;
-    private Dictionary<string, IRepresentation> _selectRepresentations;
+    private Dictionary<string, SelectRepresentation> _selectRepresentations;
     private Dictionary<string, WriteRepresentation> _writeRepresentations;
 
     public WhiteDot(string path, IConnection connection)
     {
         this._connection = connection;
 
-        this._selectRepresentations = new Dictionary<string, IRepresentation>();
+        this._selectRepresentations = new Dictionary<string, SelectRepresentation>();
         this._writeRepresentations = new Dictionary<string, WriteRepresentation>();
         this.handleFile(path);
     }
@@ -30,7 +30,7 @@ public class WhiteDot
         await this._connection.OpenConnection();
     }
 
-    public async Task<T?> Select<T>(string path, Dictionary<string, object>? parameters = null)
+    public async Task<T?> Select<T>(string path, Dictionary<string, object>? parameters = null) where T:class
     {
         var pathSplitted = this.validatePath(path);
         if (pathSplitted[0] != "select")
@@ -38,14 +38,25 @@ public class WhiteDot
             throw new InvalidPathException("A read operation must be a select representation");
         }
 
-        if (parameters is not null && parameters.ContainsKey("if_exists") &&
-            parameters["if_exists"] is Dictionary<string, object>)
-        {
-            
-        }
-
         var representation = this._selectRepresentations[pathSplitted[1]];
+        
+        if (parameters is not null && parameters.ContainsKey("if_exists") &&
+            parameters["if_exists"] is Dictionary<string, object> && representation.IfExistsRepresentation is not null)
+        {
+            IfExistsRepository ifExistsRepository =
+                new IfExistsRepository(this._connection.DbConnection, representation.IfExistsRepresentation);
 
+            DbDataReader reader = await ifExistsRepository.GetReader(representation.IfExistsRepresentation.Sql,
+                parameters["if_exists"] as Dictionary<string, object>);
+            
+            var exists = await reader.ReadAsync();
+            await reader.DisposeAsync();
+            if (!exists)
+            {
+                return null!;
+            }
+        }
+        
         SelectRepository repository =
             new SelectRepository(this._connection.DbConnection, representation);
 

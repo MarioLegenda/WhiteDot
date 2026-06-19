@@ -3,17 +3,17 @@ using WhiteDot.Representation;
 
 namespace WhiteDot.Repository;
 
-internal struct SelectRepository
+internal class IfExistsRepository
 {
     private DbConnection _connection;
-    private SelectRepresentation _representation;
+    private IfExistsRepresentation _representation;
     
-    public SelectRepository(DbConnection connection, SelectRepresentation representation)
+    public IfExistsRepository(DbConnection connection, IfExistsRepresentation representation)
     {
         this._connection = connection;
         this._representation = representation;
     }
-
+    
     public async Task<DbDataReader> GetReader(string sql, Dictionary<string, object>? parameters)
     {
         await using DbCommand command = this._connection.CreateCommand();
