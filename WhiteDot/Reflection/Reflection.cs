@@ -59,6 +59,7 @@ internal class Reflection
         var exists = await this._dbDataReader.ReadAsync();
         if (!exists)
         {
+            await this._dbDataReader.DisposeAsync();
             return null!;
         }
 

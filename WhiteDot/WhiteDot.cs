@@ -39,31 +39,44 @@ public class WhiteDot
         }
 
         var representation = this._selectRepresentations[pathSplitted[1]];
-        
-        if (parameters is not null && parameters.ContainsKey("if_exists") &&
-            parameters["if_exists"] is Dictionary<string, object> && representation.IfExistsRepresentation is not null)
+        await using var transaction = await this._connection.DbConnection.BeginTransactionAsync();
+
+        try
         {
-            IfExistsRepository ifExistsRepository =
-                new IfExistsRepository(this._connection.DbConnection, representation.IfExistsRepresentation);
-
-            DbDataReader reader = await ifExistsRepository.GetReader(representation.IfExistsRepresentation.Sql,
-                parameters["if_exists"] as Dictionary<string, object>);
-            
-            var exists = await reader.ReadAsync();
-            await reader.DisposeAsync();
-            if (!exists)
+            if (parameters is not null && parameters.ContainsKey("if_exists") &&
+                parameters["if_exists"] is Dictionary<string, object> && representation.IfExistsRepresentation is not null)
             {
-                return null;
+                IfExistsRepository ifExistsRepository =
+                    new IfExistsRepository(this._connection.DbConnection, representation.IfExistsRepresentation);
+
+                DbDataReader reader = await ifExistsRepository.GetReader(representation.IfExistsRepresentation.Sql,
+                    parameters["if_exists"] as Dictionary<string, object>, transaction);
+            
+                var exists = await reader.ReadAsync();
+                await reader.DisposeAsync();
+                if (!exists)
+                {
+                    await transaction.CommitAsync();
+                    return null;
+                }
             }
+
+            SelectRepository repository =
+                new SelectRepository(this._connection.DbConnection, representation);
+
+            DbDataReader selectReader = await repository.GetReader(representation.Sql, parameters, transaction);
+            Reflection.Reflection reflection = new Reflection.Reflection(representation, selectReader);
+            object instance = await reflection.CreateInstance<T>();
+
+            await transaction.CommitAsync();
+
+            return (T)instance;
         }
-
-        SelectRepository repository =
-            new SelectRepository(this._connection.DbConnection, representation);
-
-        Reflection.Reflection reflection = new Reflection.Reflection(representation, await repository.GetReader(representation.Sql, parameters));
-        object instance = await reflection.CreateInstance<T>();
-
-        return (T)instance;
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<int> Write(string path, Dictionary<string, object>? parameters = null)

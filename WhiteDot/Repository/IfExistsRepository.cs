@@ -14,9 +14,10 @@ internal class IfExistsRepository
         this._representation = representation;
     }
     
-    public async Task<DbDataReader> GetReader(string sql, Dictionary<string, object>? parameters)
+    public async Task<DbDataReader> GetReader(string sql, Dictionary<string, object>? parameters, DbTransaction transaction)
     {
         await using DbCommand command = this._connection.CreateCommand();
+        command.Transaction = transaction;
 
         command.CommandText = sql;
 
