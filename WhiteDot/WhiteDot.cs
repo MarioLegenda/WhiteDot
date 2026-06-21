@@ -56,7 +56,7 @@ public class WhiteDot
                 return null;
             }
         }
-        
+
         SelectRepository repository =
             new SelectRepository(this._connection.DbConnection, representation);
 
@@ -79,7 +79,20 @@ public class WhiteDot
         WriteRepository repository =
             new WriteRepository(this._connection.DbConnection, representation, parameters);
 
-        return await repository.Write();
+        await using var transaction = await this._connection.DbConnection.BeginTransactionAsync();
+        
+        try
+        {
+            var rowsAffected =  await repository.Write(transaction);
+            await transaction.CommitAsync();
+
+            return rowsAffected;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     private string[] validatePath(string path)

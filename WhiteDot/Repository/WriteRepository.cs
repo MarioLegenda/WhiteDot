@@ -22,17 +22,12 @@ internal class WriteRepository
         this._parameters = parameters;
     }
     
-    public async Task<int> Write()
+    public async Task<int> Write(DbTransaction transaction)
     {
         await using DbCommand command = this._connection.CreateCommand();
-
-        var sql = this._representation.Sql;
-        foreach (var parameter in this._representation.Parameters)
-        {
-            sql = sql.Replace(":" + parameter, "@" + parameter);
-        }
-
-        command.CommandText = sql;
+        command.Transaction = transaction;
+        
+        command.CommandText = this._representation.Sql;
 
         if (this._parameters != null)
         {
